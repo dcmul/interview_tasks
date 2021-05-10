@@ -8,7 +8,7 @@ RUN apt-get update \
  && apt-get install -y --no-install-recommends \
     supervisor
 
-COPY wallet.conf /etc/supervisor/conf.d/wallet.conf
+COPY celery.conf /etc/supervisor/conf.d/celery.conf
 
 RUN mkdir -p /var/log/celery
 
