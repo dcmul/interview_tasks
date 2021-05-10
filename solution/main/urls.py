@@ -1,0 +1,7 @@
+from django.urls import path, include
+from . import views
+
+
+urlpatterns = [
+    path("<str:meterid>/<str:starttime>/<str:endtime>", views.QueryMeterView.as_view(), name='trans_list' ),
+]
