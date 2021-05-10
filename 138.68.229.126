@@ -1,8 +1,0 @@
-POSTGRES_USER=interview1
-POSTGRES_DB=interview1
-POSTGRES_PASSWORD=interview1
-POSTGRES_HOST=db
-REDIS_HOST=redis
-
-
-

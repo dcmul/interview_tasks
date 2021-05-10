@@ -4,16 +4,24 @@ from rest_framework.views import APIView
 import time
 import secrets
 from solution.main.models import SmartMeter, MeterReading
+from dateutil.parser import parse
 
 from . import views
 
 from rest_framework.response import Response
 
-
+def create_date(s):
+    """
+    Convert string to date. Return False is date is invalid.
+    """
+    try:
+        return parse(s)
+    except Exception:
+        return False       
 
 class QueryMeterView(APIView):
     """
-    List all Chats, or create a new chat.
+    Disabling authentication for now.
     """
     authentication_classes = ()
     permission_classes = ()
@@ -22,17 +30,35 @@ class QueryMeterView(APIView):
 
     def get(self, request, format=None, *args, **kwargs):
 
-        # densite, new_id = self.get_or_create_densite(request)
-
-        # customer = kwargs['customer']
-        # print(kwargs)
         meterid = kwargs['meterid']
+        starttime = kwargs['startdate']
+        endtime = kwargs['enddate']
         starttime = kwargs['starttime']
         endtime = kwargs['endtime']
 
 
-        result = MeterReading.objects.filter(meter__account_no=meterid).values()[:100]
+        start_string = '%s %s' % (kwargs['startdate'], kwargs['starttime'])
+        date_start = create_date(start_string)
+        if not date_start:
+            return Response({'success':False, 'msg':'Invalid start String'}, status=400)
 
-        response =  Response({'status':'success', 'data':result})
-        # serializer = ChatSerializer(chat)
+
+        end_string = '%s %s' % (kwargs['enddate'], kwargs['endtime'])         
+        date_end = create_date(end_string)
+        if not date_end:
+            return Response({'success':False, 'msg':'Invalid End String'}, status=400)        
+        # print(date_start, date_end)
+
+        date_diffe = date_end - date_start
+
+        if date_diffe.seconds > 60*60:
+            return Response({'success':False, 'msg':'Difference between Start time and End Time should be less than one hour'}, status=400)
+
+        result = MeterReading.objects.filter(
+            meter__account_no=meterid,
+            time_stamp__range = (date_start, date_end),
+            ).values()[:100]
+
+        response =  Response({'success':True, 'data':result}, status=200)
+        
         return response
