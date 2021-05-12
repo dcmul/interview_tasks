@@ -31,7 +31,7 @@ Step 3:
 
 To start cli service run python manage genreadings and provide the smartmeter id and date of reading. That date format should be like 2021-03-03
 ```bash
- docker exec -it <web container> python manage.py genreadings 34 2021-03-03
+ docker-compose exec web python manage.py genreadings 34 2021-03-03
 
 ```
 
